@@ -2,23 +2,21 @@ package me.dizzykitty3.photopickerdemo;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import me.dizzykitty3.photopickerdemo.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
+    private boolean isFirstOpen = true;
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
     private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
     private TextView textViewNoDataHint;
@@ -57,14 +55,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void initButtonAction() {
         buttonSelectPhoto.setOnClickListener(v -> {
-            userEventDebugLog("click: select photo button");
+            Utils.debugLog("click: select photo button");
             pickMedia.launch(new PickVisualMediaRequest.Builder()
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
                     .build());
         });
         buttonSelectPhoto.setOnLongClickListener(v -> {
-            userEventDebugLog("long click: select photo button");
-            makeToast("Shows the first photo only");
+            Utils.debugLog("long click: select photo button");
+            if (isFirstOpen) {
+                Utils.makeToast(this, R.string.toast_first_file_only, true);
+                isFirstOpen = false;
+            }
             pickMultipleMedia.launch(new PickVisualMediaRequest.Builder()
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
                     .build());
@@ -72,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonClear.setOnClickListener(v -> {
-            userEventDebugLog("click: clear button");
+            Utils.debugLog("click: clear button");
             changeVisibility(false);
         });
         buttonClear.setOnLongClickListener(v -> {
-            userEventDebugLog("long click: clear button");
+            Utils.debugLog("long click: clear button");
             pickMedia.launch(new PickVisualMediaRequest.Builder()
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
                     .build());
@@ -84,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         textViewAppName.setOnLongClickListener(v -> {
-            userEventDebugLog("long click: app name text");
-            makeToast("Hello there :D");
+            Utils.debugLog("long click: app name text");
+            Utils.makeToast(this, R.string.toast_hello_there);
             return true; // setOnLongClickListener() expects a boolean return type
         });
     }
@@ -93,23 +94,23 @@ public class MainActivity extends AppCompatActivity {
     private void initSingleSelectPhotoPicker() {
         pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
             if (uri == null) {
-                userEventDebugLog("no media selected");
+                Utils.debugLog("no media selected");
                 return;
             }
 
-            // skip video files [reuse this code]
-            userEventDebugLog("selected URI: " + uri);
+            // skip video files
+            Utils.debugLog("selected URI = " + uri);
             final String mimeType = getContentResolver().getType(uri);
-            userEventDebugLog("uri mime type = " + mimeType);
+            Utils.debugLog("uri mime type = " + mimeType);
             if (mimeType == null) return;
             if (mimeType.startsWith("video")) {
-                userEventDebugLog("selected file is a video");
-                makeToast("Sorry! Video is not supported yet.");
+                Utils.debugLog("selected file is a video");
+                Utils.makeToast(this, true, false);
                 return;
             }
             if (mimeType.contains("gif")) {
-                userEventDebugLog("selected file is a gif");
-                makeToast("Sorry! GIF is not supported yet.");
+                Utils.debugLog("selected file is a gif");
+                Utils.makeToast(this, false, true);
             }
             imageViewPhotoShown.setImageURI(uri);
             setPhotoScale();
@@ -117,30 +118,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initMultiSelectPhotoPicker() {
-        pickMultipleMedia = registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5), uris -> {
+        pickMultipleMedia = registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(100), uris -> {
             if (uris.isEmpty()) {
-                userEventDebugLog("no media selected");
+                Utils.debugLog("no media selected");
                 return;
             }
-            userEventDebugLog("number of items selected: " + uris.size());
-            final Uri uri = uris.get(0);
+            boolean isVideo = false;
+            boolean isGif = false;
+            boolean isShowToast = false;
 
-            // skip video files [reuse this code]
-            userEventDebugLog("selected URI: " + uri);
-            final String mimeType = getContentResolver().getType(uri);
-            userEventDebugLog("uri mime type = " + mimeType);
-            if (mimeType == null) return;
-            if (mimeType.startsWith("video")) {
-                userEventDebugLog("selected file is a video");
-                makeToast("Sorry! Video is not supported yet.");
-                return;
+            final int urisCount = uris.size();
+            Utils.debugLog("number of items selected = " + urisCount);
+            for (int i = 0; i < urisCount; i++) {
+                Uri uri = uris.get(i);
+
+                // skip video files
+                Utils.debugLog("selected number = " + i + "URI = " + uri);
+                final String mimeType = getContentResolver().getType(uri);
+                Utils.debugLog("uri number = " + i + "mime type = " + mimeType);
+                if (mimeType == null) continue;
+                if (mimeType.startsWith("video")) {
+                    Utils.debugLog("selected file is a video");
+                    isVideo = true;
+                    isShowToast = true;
+                    continue;
+                }
+                if (mimeType.contains("gif")) {
+                    Utils.debugLog("selected file is a gif");
+                    isGif = true;
+                    isShowToast = true;
+                    continue;
+                }
+                isShowToast = false;
+                imageViewPhotoShown.setImageURI(uri);
+                setPhotoScale();
             }
-            if (mimeType.contains("gif")) {
-                userEventDebugLog("selected file is a gif");
-                makeToast("Sorry! GIF is not supported yet.");
+            if (isShowToast) {
+                Utils.makeToast(this, isVideo, isGif);
             }
-            imageViewPhotoShown.setImageURI(uri);
-            setPhotoScale();
         });
     }
 
@@ -162,13 +177,5 @@ public class MainActivity extends AppCompatActivity {
         changeVisibility(true);
         imageViewPhotoShown.setScaleX(0.8F);
         imageViewPhotoShown.setScaleY(0.8F);
-    }
-
-    private void makeToast(@NonNull String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-    }
-
-    private void userEventDebugLog(@NonNull String event) {
-        Log.d("me.dizzykitty3.photopickerdemo", event);
     }
 }

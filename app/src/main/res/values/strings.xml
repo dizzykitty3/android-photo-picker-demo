@@ -3,4 +3,9 @@
     <string name="no_data_hint">Selected photo will show here</string>
     <string name="button_select_photo">Tap to select a photo</string>
     <string name="button_clear">Clear</string>
+    <string name="toast_hello_there">Hello there :D</string>
+    <string name="toast_video_not_supported">Sorry! Video is not supported yet.</string>
+    <string name="toast_gif_not_supported">Sorry! GIF is not supported yet.</string>
+    <string name="toast_video_and_gif_not_supported">Sorry! Please select an image file.</string>
+    <string name="toast_first_file_only">Will shows the first selected photo only</string>
 </resources>
