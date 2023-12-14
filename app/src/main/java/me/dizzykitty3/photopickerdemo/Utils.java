@@ -5,22 +5,22 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 public class Utils {
     private static Toast currentToast;
 
     private Utils() {
+        // Empty
     }
 
     public static void debugLog(@NonNull String event) {
         Log.d("me.dizzykitty3.photopickerdemo", event);
     }
 
-    public static void makeToast(@NonNull Context context, @NonNull String text, @Nullable Boolean durationTimeIsLong) {
-        cancelToast();
-        if (durationTimeIsLong == null || !durationTimeIsLong) {
+    public static void makeToast(@NonNull Context context, @NonNull String text, @NonNull Boolean isDurationTimeLong) {
+        cancelCurrentToast();
+        if (Boolean.FALSE.equals(isDurationTimeLong)) {
             currentToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
         } else {
             currentToast = Toast.makeText(context, text, Toast.LENGTH_LONG);
@@ -28,20 +28,16 @@ public class Utils {
         currentToast.show();
     }
 
-    private static void cancelToast() {
-        if (currentToast != null) {
-            currentToast.cancel();
-        }
+    private static void cancelCurrentToast() {
+        if (currentToast != null) currentToast.cancel();
     }
 
     public static void makeToast(@NonNull Context context, @NonNull @StringRes Integer resId) {
-        final String text = context.getString(resId);
-        makeToast(context, text, false);
+        makeToast(context, context.getString(resId), false);
     }
 
-    public static void makeToast(@NonNull Context context, @NonNull @StringRes Integer resId, @SuppressWarnings("unused") @NonNull Boolean durationTimeIsLong) {
-        final String text = context.getString(resId);
-        makeToast(context, text, true);
+    public static void makeToast(@NonNull Context context, @NonNull @StringRes Integer resId, @NonNull Boolean isDurationTimeLong) {
+        makeToast(context, context.getString(resId), isDurationTimeLong);
     }
 
     public static void makeToast(@NonNull Context context, @NonNull Boolean isVideo, @NonNull Boolean isGif) {

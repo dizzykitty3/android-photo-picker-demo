@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 final String mimeType = getContentResolver().getType(uri);
                 Utils.debugLog("uri number = " + i + "mime type = " + mimeType);
                 if (mimeType == null) continue;
-                if (mimeType.startsWith("video")) {
+                if (mimeType.contains("video")) {
                     Utils.debugLog("selected file is a video");
                     isVideo = true;
                     isShowToast = true;
@@ -153,9 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 imageViewPhotoShown.setImageURI(uri);
                 setPhotoScale();
             }
-            if (isShowToast) {
-                Utils.makeToast(this, isVideo, isGif);
-            }
+            if (isShowToast) Utils.makeToast(this, isVideo, isGif);
         });
     }
 
