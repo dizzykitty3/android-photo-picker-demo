@@ -18,7 +18,7 @@ public class Utils {
         Log.d("me.dizzykitty3.photopickerdemo", event);
     }
 
-    public static void makeToast(@NonNull Context context, @NonNull String text, @NonNull Boolean isDurationTimeLong) {
+    private static void makeToast(@NonNull Context context, @NonNull String text, @NonNull Boolean isDurationTimeLong) {
         cancelCurrentToast();
         if (Boolean.FALSE.equals(isDurationTimeLong)) {
             currentToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);

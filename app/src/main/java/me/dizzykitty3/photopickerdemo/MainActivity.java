@@ -35,8 +35,7 @@ public class MainActivity extends AppCompatActivity {
         initBinding();
         initVisibility();
         initButtonAction();
-        initSingleSelectPhotoPicker();
-        initMultiSelectPhotoPicker();
+        initPhotoPicker();
     }
 
     private void initBinding() {
@@ -89,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
             Utils.makeToast(this, R.string.toast_hello_there);
             return true; // setOnLongClickListener() expects a boolean return type
         });
+    }
+
+    private void initPhotoPicker() {
+        initSingleSelectPhotoPicker();
+        initMultiSelectPhotoPicker();
     }
 
     private void initSingleSelectPhotoPicker() {
