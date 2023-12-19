@@ -41,7 +41,7 @@ public class Utils {
     }
 
     public static void makeToast(@NonNull Context context, @NonNull Boolean isVideo, @NonNull Boolean isGif) {
-        // unsupported file type toast
+        // Unsupported file type toast
         if (isVideo && isGif) {
             Utils.makeToast(context, R.string.toast_video_and_gif_not_supported);
         } else if (Boolean.TRUE.equals(isVideo)) {

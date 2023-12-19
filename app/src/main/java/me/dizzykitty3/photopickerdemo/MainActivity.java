@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         buttonClear.setOnClickListener(v -> {
             Utils.debugLog("click: clear button");
-            changeVisibility(false);
+            changeVisibilityWhenCleared();
         });
         buttonClear.setOnLongClickListener(v -> {
             Utils.debugLog("long click: clear button");
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // skip video files
+            // Skip video files
             Utils.debugLog("selected URI = " + uri);
             final String mimeType = getContentResolver().getType(uri);
             Utils.debugLog("uri mime type = " + mimeType);
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 Utils.makeToast(this, false, true);
             }
             imageViewPhotoShown.setImageURI(uri);
-            setPhotoScale();
+            onPhotoSelected();
         });
     }
 
@@ -133,10 +133,12 @@ public class MainActivity extends AppCompatActivity {
 
             final int urisCount = uris.size();
             Utils.debugLog("number of items selected = " + urisCount);
+
+            // TODO Reduce the total number of break and continue statements
             for (int i = 0; i < urisCount; i++) {
                 Uri uri = uris.get(i);
 
-                // skip video files
+                // Skip video files
                 Utils.debugLog("selected number = " + i + "URI = " + uri);
                 final String mimeType = getContentResolver().getType(uri);
                 Utils.debugLog("uri number = " + i + "mime type = " + mimeType);
@@ -155,29 +157,39 @@ public class MainActivity extends AppCompatActivity {
                 }
                 isShowToast = false;
                 imageViewPhotoShown.setImageURI(uri);
-                setPhotoScale();
+                onPhotoSelected();
             }
             if (isShowToast) Utils.makeToast(this, isVideo, isGif);
         });
     }
 
-    private void changeVisibility(boolean isPhotoShown) {
-        if (!isPhotoShown) {
-            imageViewPhotoShown.setVisibility(View.GONE);
-            buttonClear.setVisibility(View.GONE);
-            buttonSelectPhoto.setVisibility(View.VISIBLE);
-            textViewNoDataHint.setVisibility(View.VISIBLE);
-            return;
-        }
+    /**
+     * @see #changeVisibilityWhenCleared()
+     */
+    private void changeVisibilityWhenPhotoSelected() {
         imageViewPhotoShown.setVisibility(View.VISIBLE);
         buttonClear.setVisibility(View.VISIBLE);
         buttonSelectPhoto.setVisibility(View.GONE);
         textViewNoDataHint.setVisibility(View.GONE);
     }
 
+    /**
+     * @see #changeVisibilityWhenPhotoSelected()
+     */
+    private void changeVisibilityWhenCleared() {
+        imageViewPhotoShown.setVisibility(View.GONE);
+        buttonClear.setVisibility(View.GONE);
+        buttonSelectPhoto.setVisibility(View.VISIBLE);
+        textViewNoDataHint.setVisibility(View.VISIBLE);
+    }
+
     private void setPhotoScale() {
-        changeVisibility(true);
         imageViewPhotoShown.setScaleX(0.8F);
         imageViewPhotoShown.setScaleY(0.8F);
+    }
+
+    private void onPhotoSelected() {
+        changeVisibilityWhenPhotoSelected();
+        setPhotoScale();
     }
 }
