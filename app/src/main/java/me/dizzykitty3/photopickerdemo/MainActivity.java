@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Skip video files
-            Utils.debugLog("selected URI = " + uri);
+            Utils.debugLog("selected uri = " + uri);
             final String mimeType = getContentResolver().getType(uri);
             Utils.debugLog("uri mime type = " + mimeType);
             if (mimeType == null) return;
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 Uri uri = uris.get(i);
 
                 // Skip video files
-                Utils.debugLog("selected number = " + i + "URI = " + uri);
+                Utils.debugLog("selected number = " + i + "uri = " + uri);
                 final String mimeType = getContentResolver().getType(uri);
                 Utils.debugLog("uri number = " + i + "mime type = " + mimeType);
                 if (mimeType == null) continue;
