@@ -20,11 +20,10 @@ public class Utils {
 
     private static void makeToast(@NonNull Context context, @NonNull String text, @NonNull Boolean isDurationTimeLong) {
         cancelCurrentToast();
-        if (Boolean.FALSE.equals(isDurationTimeLong)) {
-            currentToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-        } else {
-            currentToast = Toast.makeText(context, text, Toast.LENGTH_LONG);
-        }
+        currentToast = Toast.makeText(
+                context,
+                text,
+                Boolean.TRUE.equals(isDurationTimeLong) ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
         currentToast.show();
     }
 

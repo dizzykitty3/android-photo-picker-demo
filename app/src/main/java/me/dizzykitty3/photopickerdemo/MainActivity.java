@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonSelectPhoto;
     private Button buttonClear;
     private ImageView imageViewPhotoShown;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initBinding() {
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         textViewNoDataHint = binding.textNoDataHint;
         textViewAppName = binding.textAppName;
         buttonSelectPhoto = binding.buttonSelectPhoto;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
                     .build());
         });
+
         buttonSelectPhoto.setOnLongClickListener(v -> {
             Utils.debugLog("long click: select photo button");
             if (isFirstOpen) {
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             Utils.debugLog("click: clear button");
             changeVisibilityWhenCleared();
         });
+
         buttonClear.setOnLongClickListener(v -> {
             Utils.debugLog("long click: clear button");
             pickMedia.launch(new PickVisualMediaRequest.Builder()
@@ -127,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 Utils.debugLog("no media selected");
                 return;
             }
+
             boolean isVideo = false;
             boolean isGif = false;
             boolean isShowToast = false;
@@ -191,5 +195,13 @@ public class MainActivity extends AppCompatActivity {
     private void onPhotoSelected() {
         changeVisibilityWhenPhotoSelected();
         setPhotoScale();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (binding != null) {
+            binding.unbind();
+        }
     }
 }
