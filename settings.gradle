@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Photo Picker Demo"
+//rootProject.name = "Photo Picker Demo"
 include ':app'
